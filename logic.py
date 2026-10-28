@@ -31,3 +31,6 @@ def gewichteter_durchschnitt(noten):
 
 def faecher(noten):
     return sorted({eintrag.fach for eintrag in noten})
+
+def note_delete(noten, index):
+    return noten[:index] + noten[index + 1 :]

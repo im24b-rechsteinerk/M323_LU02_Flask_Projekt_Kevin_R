@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from logic import Note, faecher, gewichteter_durchschnitt, hinzufuegen
+from logic import Note, faecher, gewichteter_durchschnitt, hinzufuegen, note_delete
 from storage import load_noten, save_noten
 
 app = Flask(__name__)
@@ -40,6 +40,15 @@ def erfassen():
     return render_template("erfassen.html", faecher=faecher(noten))
 
 
+@app.route("/loeschen/<int:index>", methods=["POST"])
+def loeschen(index):
+    noten = load_noten()
+    if 0 <= index < len(noten):
+        save_noten(note_delete(noten, index))
+        flash("Note gelöscht.")
+    return redirect(url_for("notenliste"))
+
+
 @app.route("/semester")
 def semester():
     return render_template(
@@ -65,6 +74,7 @@ def ziel():
         titel="Note für 4.0",
         hinweis="Kommt später (C1).",
     )
+
 
 
 if __name__ == "__main__":

@@ -19,17 +19,23 @@
         <th>Gewicht</th>
         <th>Semester</th>
         <th>Datum</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       {% for eintrag in noten %}
-        <tr class="{{ 'knapp' if eintrag.note < 4 else '' }}">
+        <tr class="{{ 'knapp' if eintrag.note < 4 else ('gut' if eintrag.note >= 5 else '') }}">
           <td>{{ eintrag.fach }}</td>
           <td>{{ eintrag.pruefung }}</td>
           <td>{{ "%.1f"|format(eintrag.note) }}</td>
           <td>{{ eintrag.gewicht }}</td>
           <td>{{ eintrag.semester }}</td>
           <td>{{ eintrag.datum }}</td>
+          <td>
+            <form method="post" action="{{ url_for('loeschen', index=loop.index0) }}">
+              <button type="submit" class="loeschen">Löschen</button>
+            </form>
+          </td>
         </tr>
       {% endfor %}
     </tbody>

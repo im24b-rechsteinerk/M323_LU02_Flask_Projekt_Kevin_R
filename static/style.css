@@ -1,0 +1,126 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Calibri, Segoe UI, sans-serif;
+  color: #1f2933;
+  background: #f4f7fa;
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: #1f2a37;
+}
+
+.brand {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+nav a {
+  color: #d9e2ec;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #fff;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.schnitt {
+  color: #52606d;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.55rem 0.7rem;
+  border-bottom: 1px solid #d9e2ec;
+}
+
+th {
+  background: #e4ebf2;
+}
+
+tr.knapp {
+  background: #fde8e8;
+}
+
+tr.gut {
+  background-color: rgba(0, 128, 0, 0.2);
+}
+
+form {
+  display: grid;
+  gap: 0.85rem;
+  max-width: 420px;
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+}
+
+input,
+button {
+  font: inherit;
+  padding: 0.45rem 0.6rem;
+}
+
+button {
+  background: #245b8a;
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1b466a;
+}
+
+button.loeschen {
+  background: #9b1c1c;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+}
+
+button.loeschen:hover {
+  background: #7a1515;
+}
+
+.flash {
+  background: #e1f5ee;
+  padding: 0.8rem 1rem;
+  list-style: none;
+}
