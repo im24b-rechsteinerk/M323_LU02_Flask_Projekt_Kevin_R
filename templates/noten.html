@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Notenliste{% endblock %}
+{% block content %}
+  <h1>Notenliste</h1>
+  <p class="schnitt">
+    Gewichteter Durchschnitt:
+    {% if schnitt is none %}
+      –
+    {% else %}
+      {{ "%.2f"|format(schnitt) }}
+    {% endif %}
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>Fach</th>
+        <th>Prüfung</th>
+        <th>Note</th>
+        <th>Gewicht</th>
+        <th>Semester</th>
+        <th>Datum</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for eintrag in noten %}
+        <tr class="{{ 'knapp' if eintrag.note < 4 else '' }}">
+          <td>{{ eintrag.fach }}</td>
+          <td>{{ eintrag.pruefung }}</td>
+          <td>{{ "%.1f"|format(eintrag.note) }}</td>
+          <td>{{ eintrag.gewicht }}</td>
+          <td>{{ eintrag.semester }}</td>
+          <td>{{ eintrag.datum }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
