@@ -90,3 +90,9 @@ Zum ersten Fall, gerechnet als Summe aus Note mal Gewicht geteilt durch Summe de
 
 1. Die Route `/ranking` wird zuerst imperativ gebaut: mit Schleifen direkt in der Route und einer eigenen Commit-Version.
 2. Danach wird sie mit den Operatoren oben deklarativ umgesetzt. Dieselben Tests müssen in beiden Versionen bestehen.
+
+## Abweichung bei der Umsetzung
+
+Dieser Abschnitt kam nach dem ersten Design dazu.
+
+`nach_fach` nutzt `sorted` und `groupby` statt `reduce`. Eine `reduce`-Variante ohne Mutation müsste bei jedem Schritt Dictionary und Liste kopieren und war bei 10000 Noten und 500 Fächern über 20-mal langsamer. Eine schnelle `reduce`-Variante müsste ein Dictionary verändern. Die Zahlen stehen in `docs/messung_ranking.md`.

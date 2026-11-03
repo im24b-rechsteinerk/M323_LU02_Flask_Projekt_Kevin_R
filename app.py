@@ -1,6 +1,13 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from logic import Note, faecher, gewichteter_durchschnitt, hinzufuegen, note_delete
+from logic import (
+    Note,
+    faecher,
+    faecher_ranking,
+    gewichteter_durchschnitt,
+    hinzufuegen,
+    note_delete,
+)
 from storage import load_noten, save_noten
 
 app = Flask(__name__)
@@ -60,37 +67,7 @@ def semester():
 
 @app.route("/ranking")
 def ranking():
-    noten = load_noten()
-
-    faecher_liste = []
-    for eintrag in noten:
-        if eintrag.fach not in faecher_liste:
-            faecher_liste.append(eintrag.fach)
-
-    zeilen = []
-    for fach in faecher_liste:
-        summe = 0
-        gewicht_summe = 0
-        anzahl = 0
-        for eintrag in noten:
-            if eintrag.fach == fach:
-                summe += eintrag.note * eintrag.gewicht
-                gewicht_summe += eintrag.gewicht
-                anzahl += 1
-        if gewicht_summe != 0:
-            zeilen.append({"fach": fach, "schnitt": summe / gewicht_summe, "anzahl": anzahl})
-
-    for i in range(len(zeilen)):
-        for j in range(len(zeilen) - 1 - i):
-            links = zeilen[j]
-            rechts = zeilen[j + 1]
-            if links["schnitt"] < rechts["schnitt"] or (
-                links["schnitt"] == rechts["schnitt"] and links["fach"] > rechts["fach"]
-            ):
-                zeilen[j] = rechts
-                zeilen[j + 1] = links
-
-    return render_template("ranking.html", zeilen=zeilen)
+    return render_template("ranking.html", zeilen=faecher_ranking(load_noten()))
 
 
 @app.route("/ziel")
