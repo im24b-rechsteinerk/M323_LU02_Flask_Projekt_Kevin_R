@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Fächer-Ranking{% endblock %}
+{% block content %}
+  <h1>Fächer-Ranking</h1>
+  {% if zeilen %}
+    <table>
+      <thead>
+        <tr>
+          <th>Rang</th>
+          <th>Fach</th>
+          <th>Schnitt</th>
+          <th>Anzahl Noten</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for zeile in zeilen %}
+          <tr class="{{ 'knapp' if zeile.schnitt < 4 else ('gut' if zeile.schnitt >= 5 else '') }}">
+            <td>{{ loop.index }}</td>
+            <td>{{ zeile.fach }}</td>
+            <td>{{ "%.2f"|format(zeile.schnitt) }}</td>
+            <td>{{ zeile.anzahl }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Noch keine Noten für ein Ranking vorhanden.</p>
+  {% endif %}
+{% endblock %}

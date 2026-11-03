@@ -31,7 +31,7 @@ pytest
 | Notenliste mit gewichtetem Durchschnitt und Löschen | `/noten` | fertig |
 | Note erfassen | `/erfassen` | fertig |
 | Semesterstatistik | `/semester` | Platzhalter |
-| Fächer-Ranking | `/ranking` | Platzhalter |
+| Fächer-Ranking | `/ranking` | fertig |
 | Note für 4.0 | `/ziel` | Platzhalter |
 
 ## Aufbau
@@ -43,4 +43,5 @@ pytest
 | `storage.py` | CSV lesen und schreiben, einzige Stelle mit I/O |
 | `data/noten.csv` | Notendaten |
 | `templates/`, `static/` | HTML-Templates und CSS |
-| `tests/` | Tests für `logic.py` und `storage.py` |
+| `tests/` | Tests für `logic.py`, `storage.py` und das Ranking |
+| `docs/` | Design-Blätter |
