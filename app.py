@@ -7,6 +7,7 @@ from logic import (
     gewichteter_durchschnitt,
     hinzufuegen,
     note_delete,
+    semester_statistiken,
     ziel_berechnen,
 )
 from storage import load_noten, save_noten
@@ -59,11 +60,7 @@ def loeschen(index):
 
 @app.route("/semester")
 def semester():
-    return render_template(
-        "platzhalter.html",
-        titel="Semesterstatistik",
-        hinweis="Kommt später (C2I).",
-    )
+    return render_template("semester.html", zeilen=semester_statistiken(load_noten()))
 
 
 @app.route("/ranking")

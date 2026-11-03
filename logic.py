@@ -1,10 +1,12 @@
 import math
 from dataclasses import dataclass
+from functools import reduce
 from itertools import groupby
 from operator import attrgetter
 
 NOTE_MIN = 1.0
 NOTE_MAX = 6.0
+NOTE_GENUEGEND = 4.0
 
 
 @dataclass(frozen=True)
@@ -29,6 +31,16 @@ class Zielergebnis:
     fach: str
     note: float
     status: str
+
+
+@dataclass(frozen=True)
+class SemesterStatistik:
+    semester: int
+    schnitt: float | None
+    anzahl: int
+    ungenuegend: int
+    abstand: float
+    beste_note: float | None
 
 
 def hinzufuegen(noten, neue):
@@ -113,3 +125,35 @@ def ziel_berechnen(
         gewichtete_punkte(fach_noten), summe_gewichte(fach_noten), neues_gewicht, ziel
     )
     return Zielergebnis(fach, note, ziel_status(note))
+
+
+def semester_liste(noten):
+    return sorted(set(map(lambda eintrag: eintrag.semester, noten)))
+
+
+def ungenuegende_noten(noten):
+    return list(filter(lambda eintrag: eintrag.note < NOTE_GENUEGEND, noten))
+
+
+def abstand_zu_genuegend(noten):
+    return reduce(
+        lambda summe, abstand: summe + abstand,
+        map(lambda eintrag: NOTE_GENUEGEND - eintrag.note, ungenuegende_noten(noten)),
+        0.0,
+    )
+
+
+def semester_statistik(noten, semester):
+    im_semester = list(filter(lambda eintrag: eintrag.semester == semester, noten))
+    return SemesterStatistik(
+        semester=semester,
+        schnitt=gewichteter_durchschnitt(im_semester),
+        anzahl=len(im_semester),
+        ungenuegend=len(ungenuegende_noten(im_semester)),
+        abstand=abstand_zu_genuegend(im_semester),
+        beste_note=max(map(lambda eintrag: eintrag.note, im_semester), default=None),
+    )
+
+
+def semester_statistiken(noten):
+    return list(map(lambda semester: semester_statistik(noten, semester), semester_liste(noten)))

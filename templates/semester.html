@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Semesterstatistik{% endblock %}
+{% block content %}
+  <h1>Semesterstatistik</h1>
+  {% if zeilen %}
+    <table>
+      <thead>
+        <tr>
+          <th>Semester</th>
+          <th>Schnitt</th>
+          <th>Anzahl Noten</th>
+          <th>Ungenügend</th>
+          <th>Abstand zur 4.0</th>
+          <th>Beste Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for zeile in zeilen %}
+          <tr>
+            <td>{{ zeile.semester }}</td>
+            <td>{{ "%.2f"|format(zeile.schnitt) if zeile.schnitt is not none else "–" }}</td>
+            <td>{{ zeile.anzahl }}</td>
+            <td>{{ zeile.ungenuegend }}</td>
+            <td>{{ "%.1f"|format(zeile.abstand) }}</td>
+            <td>{{ "%.1f"|format(zeile.beste_note) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Noch keine Noten für eine Statistik vorhanden.</p>
+  {% endif %}
+{% endblock %}

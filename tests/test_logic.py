@@ -5,6 +5,8 @@ import pytest
 from logic import (
     FachSchnitt,
     Note,
+    SemesterStatistik,
+    abstand_zu_genuegend,
     fach_schnitt,
     faecher,
     faecher_ranking,
@@ -17,7 +19,11 @@ from logic import (
     note_delete,
     noten_von_fach,
     ranking_schluessel,
+    semester_liste,
+    semester_statistik,
+    semester_statistiken,
     summe_gewichte,
+    ungenuegende_noten,
     ziel_berechnen,
     ziel_status,
 )
@@ -224,3 +230,75 @@ def test_ziel_berechnen_nicht_erreichbar():
 @pytest.mark.parametrize("gewicht", [0.0, -1.0, float("inf"), float("nan")])
 def test_ziel_berechnen_mit_ungueltigem_gewicht_ist_none(gewicht):
     assert ziel_berechnen([beispiel()], "Mathematik", gewicht) is None
+
+
+def im_semester(semester, note=5.0, gewicht=1.0):
+    return Note(
+        fach="Mathematik",
+        pruefung="Prüfung",
+        note=note,
+        gewicht=gewicht,
+        semester=semester,
+        datum="2026-01-15",
+    )
+
+
+def test_semester_liste_sortiert_ohne_duplikate():
+    noten = [im_semester(2), im_semester(1), im_semester(2)]
+    assert semester_liste(noten) == [1, 2]
+
+
+def test_ungenuegende_noten_zaehlt_die_4_nicht_mit():
+    drei_fuenf, vier = im_semester(1, note=3.5), im_semester(1, note=4.0)
+    assert ungenuegende_noten([drei_fuenf, vier]) == [drei_fuenf]
+
+
+def test_abstand_zu_genuegend_summiert_nur_ungenuegende():
+    noten = [im_semester(1, note=3.5), im_semester(1, note=2.0), im_semester(1, note=5.0)]
+    assert abstand_zu_genuegend(noten) == pytest.approx(2.5)
+
+
+def test_abstand_zu_genuegend_ohne_ungenuegende_ist_null():
+    assert abstand_zu_genuegend([im_semester(1, note=5.0)]) == 0
+
+
+def test_semester_statistik_berechnet_alle_werte():
+    noten = [
+        im_semester(1, note=4.0, gewicht=2.0),
+        im_semester(1, note=5.5),
+        im_semester(1, note=3.5),
+        im_semester(2, note=6.0),
+    ]
+    statistik = semester_statistik(noten, 1)
+    assert statistik.semester == 1
+    assert statistik.schnitt == pytest.approx(4.25)
+    assert statistik.anzahl == 3
+    assert statistik.ungenuegend == 1
+    assert statistik.abstand == pytest.approx(0.5)
+    assert statistik.beste_note == 5.5
+
+
+def test_semester_statistik_mit_gewicht_null_hat_keinen_schnitt():
+    statistik = semester_statistik([im_semester(1, note=5.0, gewicht=0.0)], 1)
+    assert statistik.schnitt is None
+    assert statistik.anzahl == 1
+
+
+def test_semester_statistik_ohne_noten_im_semester():
+    assert semester_statistik([im_semester(2)], 1) == SemesterStatistik(1, None, 0, 0, 0.0, None)
+
+
+def test_semester_statistiken_liefert_jedes_semester_in_reihenfolge():
+    noten = [im_semester(2), im_semester(1)]
+    assert [statistik.semester for statistik in semester_statistiken(noten)] == [1, 2]
+
+
+def test_semester_statistiken_ohne_noten_ist_leer():
+    assert semester_statistiken([]) == []
+
+
+def test_semester_statistiken_veraendert_eingabe_nicht():
+    noten = [im_semester(2), im_semester(1)]
+    kopie = list(noten)
+    semester_statistiken(noten)
+    assert noten == kopie
