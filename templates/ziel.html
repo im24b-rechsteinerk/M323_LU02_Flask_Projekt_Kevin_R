@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Note für 4.0{% endblock %}
+{% block content %}
+  <h1>Note für 4.0</h1>
+  {% if faecher %}
+    <form method="get">
+      <label>
+        Fach
+        <select name="fach" required>
+          {% for eintrag in faecher %}
+            <option value="{{ eintrag }}" {{ "selected" if eintrag == fach }}>{{ eintrag }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Gewicht der nächsten Prüfung
+        <input name="gewicht" type="number" min="0.5" step="0.5" value="{{ gewicht }}" required>
+      </label>
+      <button type="submit">Berechnen</button>
+    </form>
+    {% if fach and ergebnis is none %}
+      <p class="ergebnis">Das Gewicht muss grösser als 0 sein.</p>
+    {% elif ergebnis and ergebnis.status == "sicher" %}
+      <p class="ergebnis">In {{ ergebnis.fach }} erreichst du den Schnitt von 4.0 mit jeder Note.</p>
+    {% elif ergebnis and ergebnis.status == "unmoeglich" %}
+      <p class="ergebnis">In {{ ergebnis.fach }} wäre eine {{ "%.2f"|format(ergebnis.note) }} nötig. Mit einer Prüfung ist der Schnitt von 4.0 nicht erreichbar.</p>
+    {% elif ergebnis %}
+      <p class="ergebnis">In {{ ergebnis.fach }} brauchst du mindestens eine {{ "%.2f"|format(ergebnis.note) }}.</p>
+    {% endif %}
+  {% else %}
+    <p>Noch keine Noten erfasst.</p>
+  {% endif %}
+{% endblock %}

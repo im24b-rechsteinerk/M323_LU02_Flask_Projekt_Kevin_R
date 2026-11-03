@@ -92,6 +92,7 @@ label {
 }
 
 input,
+select,
 button {
   font: inherit;
   padding: 0.45rem 0.6rem;
@@ -117,6 +118,11 @@ button.loeschen {
 
 button.loeschen:hover {
   background: #7a1515;
+}
+
+.ergebnis {
+  margin-top: 1.25rem;
+  font-weight: 700;
 }
 
 .flash {

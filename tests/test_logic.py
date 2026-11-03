@@ -8,12 +8,18 @@ from logic import (
     fach_schnitt,
     faecher,
     faecher_ranking,
+    benoetigte_note,
+    gewichtete_punkte,
     gewichteter_durchschnitt,
     hinzufuegen,
     hinzufuegen_mutierend,
     nach_fach,
     note_delete,
+    noten_von_fach,
     ranking_schluessel,
+    summe_gewichte,
+    ziel_berechnen,
+    ziel_status,
 )
 
 
@@ -145,3 +151,76 @@ def test_faecher_ranking_veraendert_eingabe_nicht():
     kopie = list(noten)
     faecher_ranking(noten)
     assert noten == kopie
+
+
+def test_noten_von_fach_filtert_nach_fach():
+    mathe, englisch = beispiel("Mathematik"), beispiel("Englisch")
+    assert noten_von_fach([mathe, englisch], "Englisch") == [englisch]
+
+
+def test_gewichtete_punkte_und_summe_gewichte():
+    noten = [beispiel(note=4.0, gewicht=2.0), beispiel(note=5.5, gewicht=1.0)]
+    assert gewichtete_punkte(noten) == pytest.approx(13.5)
+    assert summe_gewichte(noten) == pytest.approx(3.0)
+
+
+def test_punkte_und_gewichte_ohne_noten_sind_null():
+    assert gewichtete_punkte([]) == 0
+    assert summe_gewichte([]) == 0
+
+
+def test_benoetigte_note_rechnet_mit_formel():
+    assert benoetigte_note(21.5, 5.0, 1.0, 4.0) == pytest.approx(2.5)
+
+
+def test_benoetigte_note_beruecksichtigt_neues_gewicht():
+    assert benoetigte_note(21.5, 5.0, 2.0, 4.0) == pytest.approx(3.25)
+
+
+@pytest.mark.parametrize(
+    ("note", "status"),
+    [
+        (0.99, "sicher"),
+        (1.0, "moeglich"),
+        (4.0, "moeglich"),
+        (6.0, "moeglich"),
+        (6.01, "unmoeglich"),
+    ],
+)
+def test_ziel_status_an_den_grenzen(note, status):
+    assert ziel_status(note) == status
+
+
+def test_ziel_berechnen_mit_mathematik_aus_echten_daten():
+    noten = [
+        beispiel("Mathematik", note=4.5),
+        beispiel("Mathematik", note=4.0, gewicht=2.0),
+        beispiel("Mathematik", note=5.5),
+        beispiel("Mathematik", note=3.5),
+        beispiel("Englisch", note=1.0),
+    ]
+    ergebnis = ziel_berechnen(noten, "Mathematik", 1.0)
+    assert ergebnis.fach == "Mathematik"
+    assert ergebnis.note == pytest.approx(2.5)
+    assert ergebnis.status == "moeglich"
+
+
+def test_ziel_berechnen_ohne_noten_braucht_das_ziel_selbst():
+    assert ziel_berechnen([], "Mathematik", 1.0).note == pytest.approx(4.0)
+
+
+def test_ziel_berechnen_schon_sicher():
+    ergebnis = ziel_berechnen([beispiel(note=6.0, gewicht=3.0)], "Mathematik", 1.0)
+    assert ergebnis.note == pytest.approx(-2.0)
+    assert ergebnis.status == "sicher"
+
+
+def test_ziel_berechnen_nicht_erreichbar():
+    ergebnis = ziel_berechnen([beispiel(note=2.0, gewicht=3.0)], "Mathematik", 1.0)
+    assert ergebnis.note == pytest.approx(10.0)
+    assert ergebnis.status == "unmoeglich"
+
+
+@pytest.mark.parametrize("gewicht", [0.0, -1.0, float("inf"), float("nan")])
+def test_ziel_berechnen_mit_ungueltigem_gewicht_ist_none(gewicht):
+    assert ziel_berechnen([beispiel()], "Mathematik", gewicht) is None

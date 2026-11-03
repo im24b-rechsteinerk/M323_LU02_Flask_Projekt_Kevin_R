@@ -7,6 +7,7 @@ from logic import (
     gewichteter_durchschnitt,
     hinzufuegen,
     note_delete,
+    ziel_berechnen,
 )
 from storage import load_noten, save_noten
 
@@ -72,10 +73,15 @@ def ranking():
 
 @app.route("/ziel")
 def ziel():
+    noten = load_noten()
+    fach = request.args.get("fach", "")
+    gewicht = request.args.get("gewicht", 1.0, type=float)
     return render_template(
-        "platzhalter.html",
-        titel="Note für 4.0",
-        hinweis="Kommt später (C1).",
+        "ziel.html",
+        faecher=faecher(noten),
+        fach=fach,
+        gewicht=gewicht,
+        ergebnis=ziel_berechnen(noten, fach, gewicht) if fach else None,
     )
 
 
