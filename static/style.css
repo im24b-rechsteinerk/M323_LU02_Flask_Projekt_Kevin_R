@@ -120,6 +120,13 @@ button.loeschen:hover {
   background: #7a1515;
 }
 
+form.filter {
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  align-items: end;
+  max-width: none;
+  margin-bottom: 1rem;
+}
+
 .ergebnis {
   margin-top: 1.25rem;
   font-weight: 700;

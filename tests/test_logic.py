@@ -5,12 +5,14 @@ import pytest
 from logic import (
     FachSchnitt,
     Note,
+    NotenZeile,
     SemesterStatistik,
     abstand_zu_genuegend,
     fach_schnitt,
     faecher,
     faecher_ranking,
     benoetigte_note,
+    gesamtgewicht,
     gewichtete_punkte,
     gewichteter_durchschnitt,
     hinzufuegen,
@@ -18,12 +20,15 @@ from logic import (
     nach_fach,
     note_delete,
     noten_von_fach,
+    noten_zeilen,
     ranking_schluessel,
     semester_liste,
     semester_statistik,
     semester_statistiken,
+    sortieren,
     summe_gewichte,
     ungenuegende_noten,
+    zeilen_von_fach,
     ziel_berechnen,
     ziel_status,
 )
@@ -302,3 +307,63 @@ def test_semester_statistiken_veraendert_eingabe_nicht():
     kopie = list(noten)
     semester_statistiken(noten)
     assert noten == kopie
+
+
+def test_noten_zeilen_merkt_sich_den_index():
+    erste, zweite = beispiel(note=4.0), beispiel(note=5.0)
+    assert noten_zeilen([erste, zweite]) == [NotenZeile(0, erste), NotenZeile(1, zweite)]
+
+
+def test_zeilen_von_fach_behaelt_den_originalen_index():
+    zeilen = noten_zeilen([beispiel("Mathematik"), beispiel("Englisch")])
+    assert zeilen_von_fach(zeilen, "Englisch") == [NotenZeile(1, beispiel("Englisch"))]
+
+
+def test_zeilen_von_fach_ohne_fach_liefert_alle():
+    zeilen = noten_zeilen([beispiel("Mathematik"), beispiel("Englisch")])
+    assert zeilen_von_fach(zeilen, "") == zeilen
+
+
+def test_zeilen_von_unbekanntem_fach_sind_leer():
+    assert zeilen_von_fach(noten_zeilen([beispiel("Mathematik")]), "Physik") == []
+
+
+def indizes_nach_sortierung(sortierung):
+    zeilen = noten_zeilen(
+        [
+            Note("Mathematik", "A", 4.0, 1.0, 1, "2026-03-01"),
+            Note("Biologie", "B", 6.0, 1.0, 1, "2026-05-01"),
+            Note("Chemie", "C", 5.0, 1.0, 1, "2026-01-01"),
+        ]
+    )
+    return [zeile.index for zeile in sortieren(zeilen, sortierung)]
+
+
+@pytest.mark.parametrize(
+    ("sortierung", "indizes"),
+    [
+        ("erfasst", [0, 1, 2]),
+        ("datum", [2, 0, 1]),
+        ("note", [1, 2, 0]),
+        ("fach", [1, 2, 0]),
+        ("unbekannt", [0, 1, 2]),
+    ],
+)
+def test_sortieren_nach_jeder_sortierung(sortierung, indizes):
+    assert indizes_nach_sortierung(sortierung) == indizes
+
+
+def test_sortieren_veraendert_eingabe_nicht():
+    zeilen = noten_zeilen([beispiel(note=4.0), beispiel(note=6.0)])
+    kopie = list(zeilen)
+    sortieren(zeilen, "note")
+    assert zeilen == kopie
+
+
+def test_gesamtgewicht_summiert_die_gewichte():
+    zeilen = noten_zeilen([beispiel(gewicht=2.0), beispiel(gewicht=0.5)])
+    assert gesamtgewicht(zeilen) == pytest.approx(2.5)
+
+
+def test_gesamtgewicht_ohne_zeilen_ist_null():
+    assert gesamtgewicht([]) == 0

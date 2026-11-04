@@ -4,10 +4,14 @@ from logic import (
     Note,
     faecher,
     faecher_ranking,
+    gesamtgewicht,
     gewichteter_durchschnitt,
     hinzufuegen,
     note_delete,
+    noten_zeilen,
     semester_statistiken,
+    sortieren,
+    zeilen_von_fach,
     ziel_berechnen,
 )
 from storage import load_noten, save_noten
@@ -24,10 +28,17 @@ def index():
 @app.route("/noten")
 def notenliste():
     noten = load_noten()
+    fach = request.args.get("fach", "")
+    sortierung = request.args.get("sortierung", "erfasst")
+    zeilen = sortieren(zeilen_von_fach(noten_zeilen(noten), fach), sortierung)
     return render_template(
         "noten.html",
-        noten=noten,
-        schnitt=gewichteter_durchschnitt(noten),
+        zeilen=zeilen,
+        schnitt=gewichteter_durchschnitt([zeile.eintrag for zeile in zeilen]),
+        gesamtgewicht=gesamtgewicht(zeilen),
+        faecher=faecher(noten),
+        fach=fach,
+        sortierung=sortierung,
     )
 
 

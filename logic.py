@@ -20,6 +20,12 @@ class Note:
 
 
 @dataclass(frozen=True)
+class NotenZeile:
+    index: int
+    eintrag: Note
+
+
+@dataclass(frozen=True)
 class FachSchnitt:
     fach: str
     schnitt: float
@@ -157,3 +163,34 @@ def semester_statistik(noten, semester):
 
 def semester_statistiken(noten):
     return list(map(lambda semester: semester_statistik(noten, semester), semester_liste(noten)))
+
+
+SORTIERUNGEN = {
+    "erfasst": lambda zeile: zeile.index,
+    "datum": lambda zeile: zeile.eintrag.datum,
+    "note": lambda zeile: -zeile.eintrag.note,
+    "fach": lambda zeile: zeile.eintrag.fach,
+}
+
+
+def noten_zeilen(noten):
+    return list(map(NotenZeile, range(len(noten)), noten))
+
+
+def zeilen_von_fach(zeilen, fach):
+    if not fach:
+        return zeilen
+
+    def ist_im_fach(zeile):
+        return zeile.eintrag.fach == fach
+
+    return list(filter(ist_im_fach, zeilen))
+
+
+def sortieren(zeilen, sortierung):
+    schluessel = SORTIERUNGEN.get(sortierung, SORTIERUNGEN["erfasst"])
+    return sorted(zeilen, key=schluessel)
+
+
+def gesamtgewicht(zeilen):
+    return reduce(lambda summe, zeile: summe + zeile.eintrag.gewicht, zeilen, 0.0)

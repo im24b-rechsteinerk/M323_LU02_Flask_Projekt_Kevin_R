@@ -2,6 +2,27 @@
 {% block title %}Notenliste{% endblock %}
 {% block content %}
   <h1>Notenliste</h1>
+  <form method="get" class="filter">
+    <label>
+      Fach
+      <select name="fach">
+        <option value="">Alle Fächer</option>
+        {% for eintrag in faecher %}
+          <option value="{{ eintrag }}" {{ "selected" if eintrag == fach }}>{{ eintrag }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Sortierung
+      <select name="sortierung">
+        <option value="erfasst" {{ "selected" if sortierung == "erfasst" }}>Wie erfasst</option>
+        <option value="datum" {{ "selected" if sortierung == "datum" }}>Datum, älteste zuerst</option>
+        <option value="note" {{ "selected" if sortierung == "note" }}>Note, beste zuerst</option>
+        <option value="fach" {{ "selected" if sortierung == "fach" }}>Fach</option>
+      </select>
+    </label>
+    <button type="submit">Anzeigen</button>
+  </form>
   <p class="schnitt">
     Gewichteter Durchschnitt:
     {% if schnitt is none %}
@@ -9,6 +30,7 @@
     {% else %}
       {{ "%.2f"|format(schnitt) }}
     {% endif %}
+    · Gesamtgewicht: {{ gesamtgewicht }}
   </p>
   <table>
     <thead>
@@ -23,16 +45,16 @@
       </tr>
     </thead>
     <tbody>
-      {% for eintrag in noten %}
-        <tr class="{{ 'knapp' if eintrag.note < 4 else ('gut' if eintrag.note >= 5 else '') }}">
-          <td>{{ eintrag.fach }}</td>
-          <td>{{ eintrag.pruefung }}</td>
-          <td>{{ "%.1f"|format(eintrag.note) }}</td>
-          <td>{{ eintrag.gewicht }}</td>
-          <td>{{ eintrag.semester }}</td>
-          <td>{{ eintrag.datum }}</td>
+      {% for zeile in zeilen %}
+        <tr class="{{ 'knapp' if zeile.eintrag.note < 4 else ('gut' if zeile.eintrag.note >= 5 else '') }}">
+          <td>{{ zeile.eintrag.fach }}</td>
+          <td>{{ zeile.eintrag.pruefung }}</td>
+          <td>{{ "%.1f"|format(zeile.eintrag.note) }}</td>
+          <td>{{ zeile.eintrag.gewicht }}</td>
+          <td>{{ zeile.eintrag.semester }}</td>
+          <td>{{ zeile.eintrag.datum }}</td>
           <td>
-            <form method="post" action="{{ url_for('loeschen', index=loop.index0) }}">
+            <form method="post" action="{{ url_for('loeschen', index=zeile.index) }}">
               <button type="submit" class="loeschen">Löschen</button>
             </form>
           </td>

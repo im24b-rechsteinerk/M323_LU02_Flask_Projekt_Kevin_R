@@ -28,7 +28,7 @@ pytest
 
 | Seite | Route | Stand |
 |---|---|---|
-| Notenliste mit gewichtetem Durchschnitt und Löschen | `/noten` | fertig |
+| Notenliste mit Filter, Sortierung, gewichtetem Durchschnitt und Löschen | `/noten` | fertig |
 | Note erfassen | `/erfassen` | fertig |
 | Semesterstatistik | `/semester` | fertig |
 | Fächer-Ranking | `/ranking` | fertig |
@@ -41,7 +41,9 @@ pytest
 | `app.py` | Flask-Routen |
 | `logic.py` | Datentyp `Note` und pure Funktionen |
 | `storage.py` | CSV lesen und schreiben, einzige Stelle mit I/O |
+| `paradigmen.py` | Durchschnitt prozedural und objektorientiert, als Vergleich |
+| `messung_ranking.py` | Laufzeitmessung für das Ranking |
 | `data/noten.csv` | Notendaten |
 | `templates/`, `static/` | HTML-Templates und CSS |
-| `tests/` | Tests für `logic.py`, `storage.py`, das Ranking, die Note für 4.0 und die Semesterstatistik |
+| `tests/` | Tests für `logic.py`, `storage.py` und die Routen |
 | `docs/` | Design-Blätter |
