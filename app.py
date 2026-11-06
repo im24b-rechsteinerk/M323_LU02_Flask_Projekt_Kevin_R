@@ -1,12 +1,12 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 
 from logic import (
-    Note,
     faecher,
     faecher_ranking,
     gesamtgewicht,
     gewichteter_durchschnitt,
     hinzufuegen,
+    note_aus_formular,
     note_delete,
     noten_zeilen,
     semester_statistiken,
@@ -46,18 +46,16 @@ def notenliste():
 def erfassen():
     noten = load_noten()
     if request.method == "POST":
-        neue = Note(
-            fach=request.form["fach"].strip(),
-            pruefung=request.form["pruefung"].strip(),
-            note=float(request.form["note"]),
-            gewicht=float(request.form["gewicht"]),
-            semester=int(request.form["semester"]),
-            datum=request.form["datum"],
+        neue, fehler = note_aus_formular(request.form)
+        if not fehler:
+            save_noten(hinzufuegen(noten, neue))
+            flash("Note gespeichert.")
+            return redirect(url_for("notenliste"))
+        return (
+            render_template("erfassen.html", faecher=faecher(noten), fehler=fehler, werte=request.form),
+            400,
         )
-        save_noten(hinzufuegen(noten, neue))
-        flash("Note gespeichert.")
-        return redirect(url_for("notenliste"))
-    return render_template("erfassen.html", faecher=faecher(noten))
+    return render_template("erfassen.html", faecher=faecher(noten), fehler=[], werte={})
 
 
 @app.route("/loeschen/<int:index>", methods=["POST"])

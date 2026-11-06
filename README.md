@@ -29,7 +29,7 @@ pytest
 | Seite | Route | Stand |
 |---|---|---|
 | Notenliste mit Filter, Sortierung, gewichtetem Durchschnitt und Löschen | `/noten` | fertig |
-| Note erfassen | `/erfassen` | fertig |
+| Note erfassen mit Eingabeprüfung | `/erfassen` | fertig |
 | Semesterstatistik | `/semester` | fertig |
 | Fächer-Ranking | `/ranking` | fertig |
 | Note für 4.0 | `/ziel` | fertig |
@@ -46,4 +46,4 @@ pytest
 | `data/noten.csv` | Notendaten |
 | `templates/`, `static/` | HTML-Templates und CSS |
 | `tests/` | Tests für `logic.py`, `storage.py` und die Routen |
-| `docs/` | Design-Blätter |
+| `docs/` | Design-Blatt und Messung für das Ranking |

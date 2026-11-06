@@ -1,5 +1,6 @@
 import math
 from dataclasses import dataclass
+from datetime import date
 from functools import reduce
 from itertools import groupby
 from operator import attrgetter
@@ -194,3 +195,39 @@ def sortieren(zeilen, sortierung):
 
 def gesamtgewicht(zeilen):
     return reduce(lambda summe, zeile: summe + zeile.eintrag.gewicht, zeilen, 0.0)
+
+
+def zahl_oder_none(text, umwandeln):
+    try:
+        return umwandeln(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def gueltiges_datum(text):
+    try:
+        date.fromisoformat(text)
+    except (TypeError, ValueError):
+        return False
+    return True
+
+
+def note_aus_formular(formular):
+    fach = formular.get("fach", "").strip()
+    pruefung = formular.get("pruefung", "").strip()
+    note = zahl_oder_none(formular.get("note"), float)
+    gewicht = zahl_oder_none(formular.get("gewicht"), float)
+    semester = zahl_oder_none(formular.get("semester"), int)
+    datum = formular.get("datum", "")
+    pruefungen = (
+        (not fach, "Das Fach fehlt."),
+        (not pruefung, "Die Prüfung fehlt."),
+        (note is None or not NOTE_MIN <= note <= NOTE_MAX, "Die Note muss zwischen 1 und 6 liegen."),
+        (gewicht is None or not 0 < gewicht < math.inf, "Das Gewicht muss grösser als 0 sein."),
+        (semester is None or semester < 1, "Das Semester muss eine ganze Zahl ab 1 sein."),
+        (not gueltiges_datum(datum), "Das Datum ist ungültig."),
+    )
+    fehler = [meldung for ungueltig, meldung in pruefungen if ungueltig]
+    if fehler:
+        return None, fehler
+    return Note(fach, pruefung, note, gewicht, semester, datum), []
