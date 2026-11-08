@@ -166,8 +166,10 @@ def semester_statistiken(noten):
     return list(map(lambda semester: semester_statistik(noten, semester), semester_liste(noten)))
 
 
+STANDARD_SORTIERUNG = "erfasst"
+
 SORTIERUNGEN = {
-    "erfasst": lambda zeile: zeile.index,
+    STANDARD_SORTIERUNG: lambda zeile: zeile.index,
     "datum": lambda zeile: zeile.eintrag.datum,
     "note": lambda zeile: -zeile.eintrag.note,
     "fach": lambda zeile: zeile.eintrag.fach,
@@ -189,7 +191,7 @@ def zeilen_von_fach(zeilen, fach):
 
 
 def sortieren(zeilen, sortierung):
-    schluessel = SORTIERUNGEN.get(sortierung, SORTIERUNGEN["erfasst"])
+    schluessel = SORTIERUNGEN.get(sortierung, SORTIERUNGEN[STANDARD_SORTIERUNG])
     return sorted(zeilen, key=schluessel)
 
 

@@ -1,6 +1,9 @@
+from http import HTTPStatus
+
 from flask import Flask, flash, redirect, render_template, request, url_for
 
 from logic import (
+    STANDARD_SORTIERUNG,
     faecher,
     faecher_ranking,
     gesamtgewicht,
@@ -29,7 +32,7 @@ def index():
 def notenliste():
     noten = load_noten()
     fach = request.args.get("fach", "")
-    sortierung = request.args.get("sortierung", "erfasst")
+    sortierung = request.args.get("sortierung", STANDARD_SORTIERUNG)
     zeilen = sortieren(zeilen_von_fach(noten_zeilen(noten), fach), sortierung)
     return render_template(
         "noten.html",
@@ -53,7 +56,7 @@ def erfassen():
             return redirect(url_for("notenliste"))
         return (
             render_template("erfassen.html", faecher=faecher(noten), fehler=fehler, werte=request.form),
-            400,
+            HTTPStatus.BAD_REQUEST,
         )
     return render_template("erfassen.html", faecher=faecher(noten), fehler=[], werte={})
 
