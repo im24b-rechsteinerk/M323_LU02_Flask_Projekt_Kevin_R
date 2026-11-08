@@ -45,17 +45,23 @@ def notenliste():
     )
 
 
+def erfassen_seite(noten, fehler=None, werte=None):
+    return render_template(
+        "erfassen.html",
+        faecher=faecher(noten),
+        fehler=fehler or [],
+        werte={} if werte is None else werte,
+    )
+
+
 @app.route("/erfassen", methods=["GET", "POST"])
 def erfassen():
     noten = load_noten()
     if request.method != "POST":
-        return render_template("erfassen.html", faecher=faecher(noten), fehler=[], werte={})
+        return erfassen_seite(noten)
     neue, fehler = note_aus_formular(request.form)
     if fehler:
-        return (
-            render_template("erfassen.html", faecher=faecher(noten), fehler=fehler, werte=request.form),
-            HTTPStatus.BAD_REQUEST,
-        )
+        return erfassen_seite(noten, fehler, request.form), HTTPStatus.BAD_REQUEST
     save_noten(hinzufuegen(noten, neue))
     flash("Note gespeichert.")
     return redirect(url_for("notenliste"))
