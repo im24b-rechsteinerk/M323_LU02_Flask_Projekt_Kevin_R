@@ -199,6 +199,18 @@ def gesamtgewicht(zeilen):
     return reduce(lambda summe, zeile: summe + zeile.eintrag.gewicht, zeilen, 0.0)
 
 
+def notenliste_ansicht(noten, fach, sortierung):
+    zeilen = sortieren(zeilen_von_fach(noten_zeilen(noten), fach), sortierung)
+    return {
+        "zeilen": zeilen,
+        "schnitt": gewichteter_durchschnitt([zeile.eintrag for zeile in zeilen]),
+        "gesamtgewicht": gesamtgewicht(zeilen),
+        "faecher": faecher(noten),
+        "fach": fach,
+        "sortierung": sortierung,
+    }
+
+
 def zahl_oder_none(text, umwandeln):
     try:
         return umwandeln(text)
