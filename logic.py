@@ -156,6 +156,10 @@ def abstand_zu_genuegend(noten):
 
 def semester_statistik(noten, semester):
     im_semester = list(filter(lambda eintrag: eintrag.semester == semester, noten))
+    return statistik_aus_gruppe(semester, im_semester)
+
+
+def statistik_aus_gruppe(semester, im_semester):
     return SemesterStatistik(
         semester=semester,
         schnitt=gewichteter_durchschnitt(im_semester),
