@@ -75,12 +75,16 @@ def note_delete(noten, index):
     return noten[:index] + noten[index + 1 :]
 
 
-def nach_fach(noten):
-    fach_von = attrgetter("fach")
+def nach_attribut(noten, attribut):
+    schluessel = attrgetter(attribut)
     return {
-        fach: list(gruppe)
-        for fach, gruppe in groupby(sorted(noten, key=fach_von), key=fach_von)
+        wert: list(gruppe)
+        for wert, gruppe in groupby(sorted(noten, key=schluessel), key=schluessel)
     }
+
+
+def nach_fach(noten):
+    return nach_attribut(noten, "fach")
 
 
 def fach_schnitt(fach, noten):
