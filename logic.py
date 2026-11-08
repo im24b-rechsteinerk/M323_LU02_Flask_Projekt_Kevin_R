@@ -87,6 +87,10 @@ def nach_fach(noten):
     return nach_attribut(noten, "fach")
 
 
+def nach_semester(noten):
+    return nach_attribut(noten, "semester")
+
+
 def fach_schnitt(fach, noten):
     schnitt = gewichteter_durchschnitt(noten)
     return None if schnitt is None else FachSchnitt(fach, schnitt, len(noten))
@@ -171,7 +175,7 @@ def statistik_aus_gruppe(semester, im_semester):
 
 
 def semester_statistiken(noten):
-    return list(map(lambda semester: semester_statistik(noten, semester), semester_liste(noten)))
+    return [statistik_aus_gruppe(semester, gruppe) for semester, gruppe in nach_semester(noten).items()]
 
 
 STANDARD_SORTIERUNG = "erfasst"
